@@ -23,8 +23,8 @@ public abstract class GameObject implements GameKernel.GameInterface {
     public GameObject(int x, int y, int width, int height, int x2, int y2, int width2, int height2) {
         collider = new Rect(x, y, width, height);
         painter = new Rect(x2, y2, width2, height2);
-        painter.generateWithCenter();
-        collider.generateWithCenter();
+//        painter.generateWithCenter();  //如以座標點為中心點在打開，沒打開以左上角
+//        collider.generateWithCenter();
     }
 
     public GameObject(Rect rect, Rect rect2) {

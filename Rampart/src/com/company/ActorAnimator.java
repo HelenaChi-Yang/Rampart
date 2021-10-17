@@ -17,6 +17,9 @@ public class ActorAnimator implements CommandSolver.KeyListener{
     private Global.Direction dir; //怪獸目前行走方向
     private int type;  //哪隻角色
 
+    private int posX;//演員初始位置
+    private int posY;//演員初始位置
+
 
     //跑走改成state
     public enum State{
@@ -32,8 +35,11 @@ public class ActorAnimator implements CommandSolver.KeyListener{
         }
     }
 
-    //type自己思考只要建構子傳進來就好，還是你的角色走一走會變身，那就要帶入paint參數
-    public ActorAnimator(int type, State state, Global.Direction dir){
+    /**type自己思考只要建構子傳進來就好，還是你的角色走一走會變身，那就要帶入paint參數
+     * state為跑 or 走
+     * dir 為角色行走上下左右
+     * inputPosX/Y 為角色起始位置*/
+    public ActorAnimator(int type, State state, Global.Direction dir, int inputPosX, int inputPosY){
         System.out.println(new Path().img().actors().flying());
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().actors().flying());
         delay = new Delay(0);
@@ -43,6 +49,9 @@ public class ActorAnimator implements CommandSolver.KeyListener{
         this.type = type;
         setState(state); //建構一個跑或走的實體
         setDirection(dir);
+
+        posX = inputPosX;
+        posY = inputPosY;
     }
 
     public final void setState(State state){
@@ -74,15 +83,12 @@ public class ActorAnimator implements CommandSolver.KeyListener{
     }
 
     public void changeState(){
-
         count = 0;
         if(state == State.RUN){
             setState(State.WALK);
         }else if(state == State.WALK){
             setState(State.RUN);
-
         }
-
     }
 
     public void update() {
@@ -113,8 +119,25 @@ public class ActorAnimator implements CommandSolver.KeyListener{
     public int getType() {
         return type;
     }
+
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX += posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY += posY;
     }
 
 }

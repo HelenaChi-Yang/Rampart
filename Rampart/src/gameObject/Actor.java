@@ -15,11 +15,11 @@ public class Actor extends com.company.gameObject.GameObject {
     private Global.Direction dir;
 
 
-    public Actor(int x, int y, int type){
-        super(x, y, 128,128);
+    public Actor(int x, int y, int type, int posX, int posY){
+        super(x, y, 32,32);
         state = ActorAnimator.State.WALK;   //一開始都是走路 ， Animator.State.WALK  is  one of the object of State.
         dir = Global.Direction.DOWN; //一開始都是向下
-        actorAnimator = new ActorAnimator(type, state, dir);  //把要畫哪個角色和 run or walk帶入animator
+        actorAnimator = new ActorAnimator(type, state, dir, posX, posY);  //把要畫哪個角色和 run or walk帶入animator
     }
 
     @Override

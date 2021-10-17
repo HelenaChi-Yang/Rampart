@@ -15,16 +15,17 @@ import static com.company.Global.*;
 
 public class MapTest extends Scene {
 
-    Image path1;
-    Image pathUnder;
-    Image pathUp;
-    Image pathRight;
-    Image pathLeft;
-    Image cornerRightBottom;
-    Image cornerLeftBottom;
-    Image cornerRigthTop;
-    Image cornerLeftTop;
-    ArrayList<MapInfo> mapInfo;
+    private Image path1;
+    private Image pathUnder;
+    private Image pathUp;
+    private Image pathRight;
+    private Image pathLeft;
+    private Image cornerRightBottom;
+    private Image cornerLeftBottom;
+    private Image cornerRigthTop;
+    private Image cornerLeftTop;
+
+    private ArrayList<MapInfo> mapInfo;  //存入一個boolean
 
     public MapTest() throws IOException {
         mapInfo = new MapLoader("genMap.bmp", "genMap.txt").combineInfo();
@@ -51,7 +52,6 @@ public class MapTest extends Scene {
                     break;
                 case "cornerLeftBottom":
                     cornerLeftBottom = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3_2());
-                    System.out.println("cornerLeftBottom");
                     break;
                 case "cornerRigthTop":
                     cornerRigthTop = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3_3());
@@ -81,31 +81,33 @@ public class MapTest extends Scene {
                 case "path1":
                     g.drawImage(path1, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
                     break;
-                case "pathUnder":
-                    g.drawImage(pathUnder, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "pathUp":
-                    g.drawImage(pathUp, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "pathRight":
-                    g.drawImage(pathRight, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "pathLeft":
-                    g.drawImage(pathLeft, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "cornerRightBottom":
-                    g.drawImage(cornerRightBottom, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "cornerLeftBottom":
-                    g.drawImage(cornerLeftBottom, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "cornerRigthTop":
-                    g.drawImage(cornerRigthTop, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-                    break;
-                case "cornerLeftTop":
                 default:
-                    g.drawImage(cornerLeftTop, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
                     break;
+//                case "pathUnder":
+//                    g.drawImage(pathUnder, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "pathUp":
+//                    g.drawImage(pathUp, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "pathRight":
+//                    g.drawImage(pathRight, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "pathLeft":
+//                    g.drawImage(pathLeft, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "cornerRightBottom":
+//                    g.drawImage(cornerRightBottom, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "cornerLeftBottom":
+//                    g.drawImage(cornerLeftBottom, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "cornerRigthTop":
+//                    g.drawImage(cornerRigthTop, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
+//                case "cornerLeftTop":
+//                default:
+//                    g.drawImage(cornerLeftTop, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+//                    break;
             }
         }
     }
@@ -123,5 +125,19 @@ public class MapTest extends Scene {
     @Override
     public CommandSolver.KeyListener keyListener() {
         return null;
+    }
+
+    /**找出發點(數值要調整)*/
+    public MapInfo firstPixel(){
+        for (MapInfo tmp : mapInfo) {
+            if(tmp.getX() == 6 && tmp.getY()== 0){
+                return tmp;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<MapInfo> getMapInfo() {
+        return mapInfo;
     }
 }
