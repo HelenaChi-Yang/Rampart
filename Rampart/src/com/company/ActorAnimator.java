@@ -11,8 +11,10 @@ import static com.company.Global.UNIT_Y;
 public class ActorAnimator implements CommandSolver.KeyListener{
 
     private Image img;
+
     private Delay delay;
     private int count;
+
     private State state;  //跑走狀態
     private Global.Direction dir; //怪獸目前行走方向
     private int type;  //哪隻角色
@@ -40,7 +42,7 @@ public class ActorAnimator implements CommandSolver.KeyListener{
      * dir 為角色行走上下左右
      * inputPosX/Y 為角色起始位置*/
     public ActorAnimator(int type, State state, Global.Direction dir, int inputPosX, int inputPosY){
-        System.out.println(new Path().img().actors().flying());
+
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().actors().flying());
         delay = new Delay(0);
         delay.loop();
@@ -113,8 +115,6 @@ public class ActorAnimator implements CommandSolver.KeyListener{
     public void keyTyped(char c, long trigTime) {
 
     }
-
-
 
     public int getType() {
         return type;

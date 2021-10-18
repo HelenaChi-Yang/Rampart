@@ -25,6 +25,7 @@ public class MapTest extends Scene {
     private Image cornerRigthTop;
     private Image cornerLeftTop;
 
+
     private ArrayList<MapInfo> mapInfo;  //存入一個boolean
 
     public MapTest() throws IOException {
@@ -139,5 +140,9 @@ public class MapTest extends Scene {
 
     public ArrayList<MapInfo> getMapInfo() {
         return mapInfo;
+    }
+
+    public void setMapInfo(ArrayList<MapInfo> mapInfo) {
+        this.mapInfo = mapInfo;
     }
 }

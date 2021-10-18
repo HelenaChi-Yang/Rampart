@@ -23,7 +23,7 @@ public class Global {
 
     }
 
-    public static final boolean IS_DEBUG = true;
+    public static final boolean IS_DEBUG = false;
 
     public static final int UPDATE_TIMES_PER_SEC = 60;
     public static final int NANOSECOUND_PER_UPDATE = 1000000000 / UPDATE_TIMES_PER_SEC;
@@ -50,6 +50,14 @@ public class Global {
 
     //地圖每隔像素
     public static final int MAP_PIXEL = 32;
+
+    //塔的切圖單位
+    public static final int TOWEL_X = 32;
+    public static final int TOWEL_Y = 64;
+
+    //箭切圖單位
+    public static final int WEAPON_X = 32;
+    public static final int WEAPON_Y = 32;
 
 
     /**

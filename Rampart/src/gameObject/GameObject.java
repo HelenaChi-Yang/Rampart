@@ -1,4 +1,4 @@
-package com.company.gameObject;
+package gameObject;
 
 import com.company.GameKernel;
 import com.company.Global;

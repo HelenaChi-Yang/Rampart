@@ -54,8 +54,14 @@ public class Path {
                 return this + "/monster.png";
             }
 
-            public String map() {
+            public String Map() {
+                return this + "/map.png";
+            }
+            public String Map2() {
                 return this + "/map.jpg";
+            }
+            public String MapChange() {
+                return this + "/mapChange.png";
             }
 
         }
@@ -111,44 +117,55 @@ public class Path {
 
         }
 
-        public static class Objs extends Flow {
-            private Objs(Flow flow) {
-                super(flow, "/objs");
+        public static class Tower extends Flow {
+            private Tower(Flow flow) {
+                super(flow, "/tower");
             }
 
-            public String boom() {
-                return this + "/boom.png";
+            public String lightening_1() {
+                return this + "/lightening_1.png";
             }
 
-            public String boom2() {
-                return this + "/boom2.png";
+            public String lightening_2() {
+                return this + "/lightening_2.png";
+            }
+
+            public String lightening_3() {
+                return this + "/lightening_3.png";
+            }
+
+            public String lightening_change1() {
+                return this + "/lightening_change1.png";
             }
         }
 
-        public static class Background extends Flow {
-            private Background(Flow flow) {
-                super(flow, "/backgrounds");
+        public static class Weapon extends Flow {
+            private Weapon(Flow flow) {
+                super(flow, "/weapon");
             }
-            public String Map() {
-                return this + "/map.jpg";
+
+            public String Arrow() {
+                return this + "/Arrow.png";
             }
+
         }
         //因為constructor為private所以need add 接口
         public Actors actors() {
             return new Actors(this);
         }
 
-        public Objs objs() {
-            return new Objs(this);
-        }
-
         public Road road(){
             return new Road(this);
         }
 
-        public Background background() {
-            return new Background(this);
+        public Tower tower(){
+            return new Tower(this);
         }
+
+        public Weapon weapon(){
+            return new Weapon(this);
+        }
+
     }
 
     public static class Sound extends Flow {

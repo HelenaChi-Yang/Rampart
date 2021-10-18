@@ -2,7 +2,7 @@ package scene;
 
 import com.company.CommandSolver;
 import com.company.Global;
-import com.company.gameObject.GameObject;
+import gameObject.GameObject;
 import gameObject.Actor;
 
 import java.awt.*;
