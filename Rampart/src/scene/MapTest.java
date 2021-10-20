@@ -25,41 +25,62 @@ public class MapTest extends Scene {
     private Image cornerRigthTop;
     private Image cornerLeftTop;
 
+    private Image corner1;
+    private Image corner2;
+    private Image corner3;
+    private Image corner4;
+    private Image building;
+
 
     private ArrayList<MapInfo> mapInfo;  //存入一個boolean
 
     public MapTest() throws IOException {
-        mapInfo = new MapLoader("genMap.bmp", "genMap.txt").combineInfo();
+        mapInfo = new MapLoader("/maploader/map3/genMap.bmp", "/maploader/map3/genMap.txt").combineInfo();
 
         for (MapInfo tmp : mapInfo) {
             switch (tmp.getName()) {
                 case "path1":
                     path1= SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path1());
                     break;
-                case "pathUnder":
+                case "path2":
                     pathUnder = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path2());
                     break;
-                case "pathUp":
+                case "path3":
                     pathUp = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3());
                     break;
-                case "pathRight":
+                case "path4":
                     pathRight = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path4());
                     break;
-                case "pathLeft":
+                case "path5":
                     pathLeft = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path5());
                     break;
-                case "cornerRightBottom":
+                case "path3(1)":
                     cornerRightBottom = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3_1());
                     break;
-                case "cornerLeftBottom":
+                case "path3(2)":
                     cornerLeftBottom = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3_2());
                     break;
-                case "cornerRigthTop":
+                case "path3(3)":
                     cornerRigthTop = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3_3());
                     break;
-                case "cornerLeftTop":
-                default:
+                case "path3(4)":
                     cornerLeftTop = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().path3_4());
+                    break;
+                case "corner1":
+                    corner1 = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().corner1());
+                    break;
+                case "corner2":
+                    corner2 = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().corner2());
+                    break;
+                case "corner3":
+                    corner3 = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().corner3());
+                    break;
+                case "corner4":
+                    corner4 = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().corner4());
+                    break;
+                case "building":
+                default:
+                    building = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().building());
                     break;
             }
         }
@@ -80,35 +101,48 @@ public class MapTest extends Scene {
         for (MapInfo tmp : mapInfo) {
             switch (tmp.getName()) {
                 case "path1":
-                    g.drawImage(path1, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    g.drawImage(path1, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
                     break;
+                case "path2":
+                    g.drawImage(pathUnder, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path3":
+                    g.drawImage(pathUp, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path4":
+                    g.drawImage(pathRight, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path5":
+                    g.drawImage(pathLeft, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path3(1)":
+                    g.drawImage(cornerRightBottom, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path3(2)":
+                    g.drawImage(cornerLeftBottom, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path3(3)":
+                    g.drawImage(cornerRigthTop, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "path3(4)":
+                    g.drawImage(cornerLeftTop, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "corner1":
+                    g.drawImage(corner1, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "corner2":
+                    g.drawImage(corner2, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "corner3":
+                    g.drawImage(corner3, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "corner4":
+                    g.drawImage(corner4, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
+                    break;
+                case "building":
                 default:
+                    g.drawImage(building, tmp.getX()*MAP_PIXEL, tmp.getY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
                     break;
-//                case "pathUnder":
-//                    g.drawImage(pathUnder, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "pathUp":
-//                    g.drawImage(pathUp, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "pathRight":
-//                    g.drawImage(pathRight, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "pathLeft":
-//                    g.drawImage(pathLeft, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "cornerRightBottom":
-//                    g.drawImage(cornerRightBottom, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "cornerLeftBottom":
-//                    g.drawImage(cornerLeftBottom, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "cornerRigthTop":
-//                    g.drawImage(cornerRigthTop, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
-//                case "cornerLeftTop":
-//                default:
-//                    g.drawImage(cornerLeftTop, tmp.getX()*tmp.getSizeX()*MAP_PIXEL, tmp.getY()*tmp.getSizeY()*MAP_PIXEL, tmp.getSizeX()*MAP_PIXEL, tmp.getSizeY()*MAP_PIXEL, null);
-//                    break;
             }
         }
     }
@@ -129,7 +163,7 @@ public class MapTest extends Scene {
     }
 
     /**找出發點(數值要調整)*/
-    public MapInfo firstPixel(){
+    public MapInfo firstGrid(){
         for (MapInfo tmp : mapInfo) {
             if(tmp.getX() == 6 && tmp.getY()== 0){
                 return tmp;

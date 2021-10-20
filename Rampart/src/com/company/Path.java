@@ -34,7 +34,7 @@ public class Path {
                 super(flow, "/actors");
             }
 
-            public String aircraft() {
+            public String airCraft() {
                 return this + "/airplane1.png";
             }
 
@@ -63,6 +63,15 @@ public class Path {
             public String MapChange() {
                 return this + "/mapChange.png";
             }
+
+            public String artificer() { return this+"/hero_artificer.png";}
+            public String warlord() { return this+"/hero_warlord.png";}
+            public String crystalgolem() { return this+"/monster_crystalgolem.png";}
+            public String medusa() { return this+"/monster_medusa.png";}
+            public String artificerHover() { return this+"/hero_artificer_change.png";}
+            public String warlordHover() { return this+"/hero_warlord_change.png";}
+            public String crystalgolemHover() { return this+"/monster_crystalgolem_change.png";}
+            public String medusaHover() { return this+"/monster_medusa_change.png";}
 
         }
 
@@ -115,6 +124,27 @@ public class Path {
                 return this + "/pathSmall.png";
             }
 
+            public String building() {
+                return this + "/building.png";
+            }
+
+            public String corner1() {
+                return this + "/corner1.png";
+            }
+
+            public String corner2() {
+                return this + "/corner2.png";
+            }
+
+            public String corner3() {
+                return this + "/corner3.png";
+            }
+
+            public String corner4() {
+                return this + "/corner4.png";
+            }
+
+
         }
 
         public static class Tower extends Flow {
@@ -149,6 +179,56 @@ public class Path {
             }
 
         }
+
+        public static class Backgrounds extends Flow {
+
+            private Backgrounds(Flow flow) {
+                super(flow, "/backgrounds");
+            }
+
+            public String main() {
+                return this + "/main.png";
+            }
+            public String popWindow() {return  this +"/popWindow.png";}
+
+            public String grassBackground() {return  this +"/grassBackground.png";}
+
+
+        }
+
+        public static class Objs extends Flow {
+
+            private Objs(Flow flow) {
+                super(flow, "/objs");
+            }
+
+
+            public String rampart() {
+                return this + "/rampart.png";
+            }
+            public String howToPlay() {
+                return this + "/howtoplay.png";
+            }
+            public String singleMode() {
+                return this + "/singleMode.png";
+            }
+            public String onlineMode() {
+                return this + "/onlineMode.png";
+            }
+            public String exit() {
+                return this + "/exit.png";
+            }
+            public String mainMenu() { return  this + "/mainMenu.png";}
+            public String newGame() {return this + "/newGame.png";}
+            public String loadGame() {return this + "/loadGame.png";}
+            public String host() {return this + "/host.png";}
+            public String guest() {return this + "/guest.png";}
+            public String confirm() {return this + "/confirm.png";}
+            public String cancel() {return this + "/cancel.png";}
+            public String gameButtonUpGrade() {return this + "/upgrade.png";}
+            public String gameButtonSellTower() {return this + "/demolish.png";}
+        }
+
         //因為constructor為private所以need add 接口
         public Actors actors() {
             return new Actors(this);
@@ -166,19 +246,37 @@ public class Path {
             return new Weapon(this);
         }
 
+        public Objs objs() {
+            return new Objs(this);
+        }
+
+        public Backgrounds backgrounds() {
+            return new Backgrounds(this);
+        }
+
     }
 
-    public static class Sound extends Flow {
-        private Sound() {
+    public static class Sounds extends Flow {
+        private Sounds() {
             super(new Resources(), "/sounds");
         }
+        public String background(){
+            return this+"/background.wav";
+        }
+        public String menu(){
+            return this+"/menu.wav";
+        }
+        public String button() {
+            return this + "/spell3.wav";
+        }
+        public String gameButton() {
+            return this + "/buttonzz.wav";}
     }
 
     public Img img() {
         return new Img();
     }
 
-    public Sound sound() {
-        return new Sound();
-    }
-}
+    public Sounds sound() {
+        return new Sounds();
+    }}

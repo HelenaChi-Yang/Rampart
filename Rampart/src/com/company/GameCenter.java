@@ -2,6 +2,7 @@ package com.company;
 
 import controllers.SceneController;
 import scene.MainScene;
+import scene.MenuScene;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -10,7 +11,7 @@ import java.io.IOException;
 public class GameCenter implements GameKernel.GameInterface, CommandSolver.MouseCommandListener, CommandSolver.KeyListener {
 
     public GameCenter() throws IOException {
-        SceneController.getInstance().change(new MainScene());
+        SceneController.getInstance().change(new MenuScene());
     }
 
     @Override

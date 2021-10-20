@@ -32,11 +32,22 @@ public class StraightFlight extends Projectile{
 
     @Override
     public void update() {
-        translate((int)(getDistanceX() / getArriveTime() / Global.UPDATE_TIMES_PER_SEC), (int)(getDistanceX() / getArriveTime()/Global.UPDATE_TIMES_PER_SEC));
+        if (updateCountX % velocityUpdateCountX == 0){      //更新多次執行一次
+            translateX((int)getVelocityX());
+            updateCountX = 0;
+        }
+        updateCountX++;
+
+        if (updateCountY % velocityUpdateCountY == 0){      //更新多次執行一次
+            translateY((int)getVelocityY());
+            updateCountY = 0;
+        }
+        updateCountY++;
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        //顯示時呼叫getProjectileAngle得到發射弧度(要換成角度要toDegrees)，配合圖片旋轉角度
 //        g.drawImage(getImg(), getCollider().getX(), getCollider().getY(), getCollider().getWidth(),getCollider().getHigh(),null);
 //        getAnimator();
     }

@@ -2,16 +2,20 @@ package gameObject.DefenseTower;
 
 
 
-import com.company.Delay;
-import com.company.Global;
-import com.company.TowerAnimator;
+import com.company.*;
+import controllers.AudioResourceController;
 import gameObject.Actor;
 import gameObject.Projectile.StraightFlight;
 import gameObject.Projectile.Projectile;
+import menu.impl.MouseTriggerImpl;
+import scene.PopupTowerScene;
 
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+
+
 
 public class ArcherTower extends DefenseTower {
 
@@ -21,9 +25,14 @@ public class ArcherTower extends DefenseTower {
 
     private TowerAnimator towerAnimator;
 
+
+
     private enum archerTowerType {
         BASIC, ADVANCE, CROSSBOW, SPEAR
     }
+
+
+
 
 
     public ArcherTower(int x, int y, int width, int high) {     //建構時直接設為基本塔，因為無法直接蓋進階塔
@@ -31,7 +40,6 @@ public class ArcherTower extends DefenseTower {
         archerTowerType = archerTowerType.BASIC;
         setInitialTowerParameter();
         setProjectiles(new ArrayList<Projectile>(1));
-
         towerAnimator = new TowerAnimator();
     }
 
@@ -43,7 +51,7 @@ public class ArcherTower extends DefenseTower {
 
     @Override       //判定怪物進入攻擊範圍後，fireProject()，發射攻擊
     public void fireProjectile() {
-        StraightFlight temp = new StraightFlight(collider().left(), collider().top(), 30, 30);
+        StraightFlight temp = new StraightFlight(collider().left(), collider().top(), 20, 20);
         temp.setProjectileType(StraightFlight.ProjectileType.Arrow);        //設定直射投射物種類，自動載入數值
         temp.towardTarget(getTarget());
         getProjectiles().add(temp);
@@ -130,7 +138,7 @@ public class ArcherTower extends DefenseTower {
 
     @Override
     public void paintComponent(Graphics g) {
-//        super.paintComponent(g);  //加這個會瘋狂無限迴圈
+        super.paintComponent(g);
         towerAnimator.paint(painter().left(), painter().top(), painter().right(), painter().bottom(), g);
     }
 

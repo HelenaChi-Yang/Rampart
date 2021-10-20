@@ -1,0 +1,10 @@
+path1,-52,C:\Users\mandy\Desktop\道路素材\path1.png,1,1
+path2,-205,C:\Users\mandy\Desktop\道路素材\path2.png,1,1
+path3,-3355648,C:\Users\mandy\Desktop\道路素材\path3.png,1,1
+corner3,-6684673,C:\Users\mandy\Desktop\道路素材\corner3.png,1,1
+path3(4),-26113,C:\Users\mandy\Desktop\道路素材\path3(4).png,1,1
+path3(1),-65281,C:\Users\mandy\Desktop\道路素材\path3(1).png,1,1
+path4,-39424,C:\Users\mandy\Desktop\道路素材\path4.png,1,1
+path5,-3407872,C:\Users\mandy\Desktop\道路素材\path5.png,1,1
+corner2,-16737895,C:\Users\mandy\Desktop\道路素材\corner2.png,1,1
+building,-13434880,C:\Users\mandy\Desktop\道路素材\building.png,2,2

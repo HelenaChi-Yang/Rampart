@@ -32,9 +32,8 @@ public class SceneController {
     private CommandSolver.MouseCommandListener mouseListener;
     private CommandSolver.KeyListener keyListener;
 
-    public void change(Scene scene) throws IOException {
+    public void change(Scene scene)  {
         lastScene = currentScene;
-        scene.sceneBegin();
         mouseListener = scene.mouseListener();
         keyListener = scene.keyListener();
         currentScene = scene;
@@ -42,6 +41,10 @@ public class SceneController {
         ImageResourceController temp = currentImageController;
         currentImageController = lastImageController;
         lastImageController = temp;
+
+        if (scene != null) {
+            scene.sceneBegin();
+        }
     }
 
     public void paint(Graphics g) {
@@ -57,6 +60,8 @@ public class SceneController {
         if (currentScene != null) {
             currentScene.update();
         }
+
+
     }
 
     public CommandSolver.MouseCommandListener mouseListener() {

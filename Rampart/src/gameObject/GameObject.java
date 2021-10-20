@@ -3,6 +3,7 @@ package gameObject;
 import com.company.GameKernel;
 import com.company.Global;
 import gameObject.Rect;
+import menu.Button;
 
 import java.awt.*;
 
@@ -10,6 +11,7 @@ public abstract class GameObject implements GameKernel.GameInterface {
 
     private final Rect collider;
     private final Rect painter;
+    protected  Button mouseButton;
 
     public GameObject(int x, int y, int width, int height) {
         this(x, y, width, height, x, y, width, height);
@@ -80,6 +82,9 @@ public abstract class GameObject implements GameKernel.GameInterface {
     @Override
     public final void paint(Graphics g) {
         paintComponent(g);
+    }
+
+    public void paintComponent(Graphics g){
         if (Global.IS_DEBUG) {
             g.setColor(Color.RED);
             collider.paint(g);
@@ -88,6 +93,4 @@ public abstract class GameObject implements GameKernel.GameInterface {
             g.setColor(Color.black);
         }
     }
-
-    public abstract void paintComponent(Graphics g);
 }

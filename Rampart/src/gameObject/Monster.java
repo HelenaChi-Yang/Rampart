@@ -17,20 +17,6 @@ public class Monster extends Actor {
         A,
     }
 
-
-    private ActorAnimator actorAnimator;
-    private ActorAnimator.State state;
-    private Global.Direction dir;
-
-
-    public Monster(int x, int y, int type, int posX, int posY){
-        super(x, y, 32,32);
-        state = ActorAnimator.State.WALK;   //一開始都是走路 ， Animator.State.WALK  is  one of the object of State.
-        dir = Global.Direction.DOWN; //一開始都是向下
-        actorAnimator = new ActorAnimator(type, state, dir, posX, posY);  //把要畫哪個角色和 run or walk帶入animator
-    }
-
-
     public Monster(int x, int y, int width, int high) {
         super(x, y, width, high);
     }
@@ -43,7 +29,7 @@ public class Monster extends Actor {
     @Override
     public void update() {
         super.update();
-        actorAnimator.update();
+        getActorAnimator().update();
         if (isLongRangeAttack()) {      //遠程才掃
             for (Projectile p : getProjectiles()) {     //掃過投射物陣列
                 if (p.getArriveTimeCounter().count()) {      //飛行時間到
@@ -63,8 +49,8 @@ public class Monster extends Actor {
 
     @Override
     public void paintComponent(Graphics g) {
-//        super.paintComponent(g);
-        actorAnimator.paint(painter().left(), painter().top(), painter().right(), painter().bottom(), g);
+        super.paintComponent(g);
+        getActorAnimator().paint(painter().left(), painter().top(), painter().right(), painter().bottom(), g);
         if (isCombating()) {
 //            getAnimator()     //播放戰鬥動畫
         } else {
@@ -89,17 +75,20 @@ public class Monster extends Actor {
                 monsterType = MonsterType.A;
                 hp = 100;
                 attPower = 10;
-                attRange = collider().left();
+                attRange = collider().width();
                 attSpeed = 1;
                 detRange = 150;
                 phyDefense = 30;
                 magiDefense = 30;
-                moveSpeed = 40;
+                moveSpeed = 320;
                 isLongRangeAtt = false;
-//                animator =
+                setState(ActorAnimator.State.WALK);   //一開始都是走路 ， Animator.State.WALK  is  one of the object of State.
+                setDir(Global.Direction.DOWN); //一開始都是向下
+                setActorAnimator(new ActorAnimator(2, getState(), getDir()));  //把要畫哪個角色和 run or walk帶入animator
                 break;
         }
         setHp(hp);
+        life =new Life(painter().left(), painter().top()-5 , hp);
         setAttackPower(attPower);
         setAttackRange(attRange);
         setAttackSpeed(attSpeed);
@@ -113,14 +102,5 @@ public class Monster extends Actor {
 //            setProjectiles(new );     //設定投射物種類
         }
 //        setAnimator(animator);
-    }
-
-    @Override
-    public ActorAnimator getActorAnimator() {
-        return actorAnimator;
-    }
-
-    public void setActorAnimator(ActorAnimator actorAnimator) {
-        this.actorAnimator = actorAnimator;
     }
 }

@@ -3,11 +3,12 @@ package gameObject;
 import com.company.ActorAnimator;
 import com.company.Delay;
 import com.company.Global;
-import gameObject.GameObject;
 import gameObject.Projectile.Projectile;
 
 import java.awt.*;
 import java.util.ArrayList;
+
+
 
 public abstract class Actor extends GameObject {
 
@@ -22,28 +23,21 @@ public abstract class Actor extends GameObject {
     private double velocityX;       //update時X軸位移
     private double velocityY;       //update時Y軸位移
     private double moveAngle;       //移動面向角度
-    public FaceTo faceTo;       //面相方位，控制Animator
     private boolean isLongRangeAttack;      //是否為遠程攻擊型，是的話攻擊會有投射物
     private double arrivalTime;     //到達目的地所需時間
-    private Delay arriveTimeCounter;        //到達目的地所需時間計時器
+//    private Delay arriveTimeCounter;        //到達目的地所需時間計時器
     private Actor target;       //當前目標敵人
     private double SkillCoolDown;       //技能CD
     private boolean canUseSkill;      //同上，技能用
     private Delay attackInterval, skillCoolDownDelayCount;      //技能冷卻時間計算器、攻擊間格計算器
     private ArrayList<Projectile> projectiles;      //發射的攻擊投射物
-
+    private boolean isArriveDestination = true;        //是否到達目標地
+    private int moveSpeedUpdateCount, updateCount,destinationX,destinationY, direction;
 
     private ActorAnimator actorAnimator;
     private ActorAnimator.State state;
     private Global.Direction dir;
-
-
-    public Actor(int x, int y, int type, int posX, int posY){
-        super(x, y, 32,32);
-        state = ActorAnimator.State.WALK;   //一開始都是走路 ， Animator.State.WALK  is  one of the object of State.
-        dir = Global.Direction.DOWN; //一開始都是向下
-        actorAnimator = new ActorAnimator(type, state, dir, posX, posY);  //把要畫哪個角色和 run or walk帶入animator
-    }
+    protected Life life;
 
     public Actor(int x, int y, int width, int high) {
         super(x, y, width, high);
@@ -51,12 +45,17 @@ public abstract class Actor extends GameObject {
 
     public Actor(int cX, int cY, int cWidth, int cHigh, int pX, int pY, int pWidth, int pHigh) {
         super(cX, cY, cWidth, cHigh, pX, pY, pWidth, pHigh);
+        life =new Life(cX - painter().width()/2, cY - painter().height()/2 -5, hp);
     }
 
+    public void beHit() {
+        life.life--;
+    }
 
     @Override
     public void paintComponent(Graphics g) {
-//        super.paintComponent(g);
+        super.paintComponent(g);
+        life.draw(g);
         if (Global.IS_DEBUG) {
             paintDetectRange(g);
             paintAttackRange(g);
@@ -66,10 +65,15 @@ public abstract class Actor extends GameObject {
     @Override
     public void update() {      //這邊判定有點複雜，怕會有BUG，要再檢查
         if (!isCombating()) {       //是否進入戰鬥狀態
-            translate((int) velocityX, (int) velocityY);
-            if (arriveTimeCounter.count()) {      //移動到目的地時速度歸零
-                velocityX = 0;
-                velocityY = 0;
+            updateCount++;
+            if (updateCount % moveSpeedUpdateCount == 0) {       //每moveSpeedUpdateCount次才移動一次
+                translate((int) velocityX, (int) velocityY);
+                updateCount = 0;
+                if (destinationX == collider().left() && destinationY == collider().top() || arriveDestinationCondition()) {      //移動到目的地時速度歸零
+                    velocityX = 0;
+                    velocityY = 0;
+                    isArriveDestination = true;     //到達目的地
+                }
             }
         } else {
             if (getTarget() != null && isIntoAttackRange(getTarget())) {       //判斷當前目標是否離開範圍，離開的話清除當前目標
@@ -85,7 +89,7 @@ public abstract class Actor extends GameObject {
                     getAttackInterval().play();     //攻擊間格重新計時
                 } else {     //朝向敵人移動，同時繼續跑攻擊間格時間CD
                     Rect target = getTarget().collider();
-                    moveToDestination(target.left(), target.top());        //設定目標當前位置為目的地
+//                    moveToDestination(target.left(), target.top());        //設定目標當前位置為目的地
                     translate((int) velocityX, (int) velocityY);        //移動
                     if (getAttackInterval().count()) {        //攻擊間格計時++
                         getAttackInterval().stop();     //間格時間到
@@ -111,12 +115,15 @@ public abstract class Actor extends GameObject {
                 canUseSkill = true;
             }
         }
+
+        life.setX(painter().left());
+        life.setY(painter().top() -5);
     }
 
     //敵人是否在警戒範圍內，在Scene呼叫，Monster掃Soldier找目標，Soldier掃Monster找目標
     public boolean isEnemyInDetectRange(Actor enemy) {
         Rect rect = enemy.collider();
-        return getAttackRange() < Math.pow(Math.pow(rect.left() - painter().left(), 2) + Math.pow(rect.top() - painter().top(), 2), 0.5);
+        return getAttackRange() < Math.pow(Math.pow(rect.centerX() - painter().centerX(), 2) + Math.pow(rect.centerY()- painter().centerY(), 2), 0.5);
     }
 
     //使用技能
@@ -125,21 +132,21 @@ public abstract class Actor extends GameObject {
     //判定目標是否進入攻擊範圍
     public boolean isIntoAttackRange(Actor enemy) {
         Rect rect = enemy.collider();
-        return getAttackRange() < Math.pow(Math.pow(rect.left() - painter().left(), 2) + Math.pow(rect.top() - painter().top(), 2), 0.5);
+        return getAttackRange() < Math.pow(Math.pow(rect.centerX() - painter().centerX(), 2) + Math.pow(rect.centerY() - painter().centerY(), 2), 0.5);
     }
 
     //顯示警戒範圍
     public void paintDetectRange(Graphics g) {
         Color transparentMagenta = new Color(255, 204, 0, 71);        //自訂半透明顏色，左邊可選
         g.setColor(transparentMagenta);     //載入顏色
-        g.fillOval(painter().left(), painter().top(), (int) (detectRange * 2), (int) (detectRange * 2));
+        g.fillOval((int) (painter().centerX() - detectRange), (int) (painter().centerY() - detectRange), (int) (detectRange * 2), (int) (detectRange * 2));
     }
 
     //顯示攻擊範圍
     public void paintAttackRange(Graphics g) {
         Color transparentMagenta = new Color(255, 0, 59, 55);        //自訂半透明顏色，左邊可選
         g.setColor(transparentMagenta);     //載入顏色
-        g.fillOval(painter().left(), painter().top(), (int) (attackRange * 2), (int) (attackRange * 2));
+        g.fillOval((int) (painter().centerX() - attackRange), (int) (painter().centerY() - attackRange), (int) (attackRange * 2), (int) (attackRange * 2));
     }
 
     //死亡判定
@@ -152,7 +159,7 @@ public abstract class Actor extends GameObject {
 
     //是否進入戰鬥
     public boolean isCombating() {
-        if (target != null) {
+        if (target == null) {
             return false;
         }
         return true;
@@ -160,10 +167,10 @@ public abstract class Actor extends GameObject {
 
     //攻擊目標
     public void attackTarget() {
-        if (isLongRangeAttack){
+        if (isLongRangeAttack) {
             //發射投射物，投射物到達後才扣血
             fireProjectile();
-        }else {
+        } else {
             //播放攻擊動畫
             target.minusHp(this.attackPower);
         }
@@ -177,31 +184,61 @@ public abstract class Actor extends GameObject {
     }
 
     //移動到目標地
-    public void moveToDestination(int x, int y) {
-        Rect actor = collider();
-        double distance = Math.pow(Math.pow((actor.left() - x), 2) + Math.pow((actor.top() - y), 2), 2);
-        double arrivalTime = distance / moveSpeed;
-        arriveTimeCounter = new Delay((int) ((arrivalTime * Global.UPDATE_TIMES_PER_SEC)));        //移動計時器
-        velocityX = (x - actor.left()) / arrivalTime;       //X軸移動速度
-        velocityY = (y - actor.top()) / arrivalTime;       //Y軸移度速度
-        arriveTimeCounter.play();
-        moveAngle = Math.toDegrees(Math.atan(velocityY / velocityX));       //面向角度
-        if (moveAngle <= 45 || moveAngle > 315) {        //設定面向方位
-            faceTo = FaceTo.RIGHT;
-        } else if (moveAngle <= 135) {
-            faceTo = FaceTo.UP;
-        } else if (moveAngle <= 225) {
-            faceTo = FaceTo.LEFT;
-        } else if (moveAngle <= 315) {
-            faceTo = FaceTo.DOWN;
-        }       //依角度決定動畫顯示哪個方向
+    public void moveToDestination(int x, int y,int direction) {
+        isArriveDestination = false;
+        int speed;
+        destinationX = x;
+        destinationY = y;
+        moveSpeedUpdateCount = (int) Math.round(Global.UPDATE_TIMES_PER_SEC / moveSpeed);       //速度慢就多次更新才移動1Pixel
+        if (moveSpeedUpdateCount == 0){
+            moveSpeedUpdateCount = 1;
+        }
+        if (moveSpeed/Global.UPDATE_TIMES_PER_SEC > 1){     //速度快就移動多格
+            speed = (int)Math.round(moveSpeed/Global.UPDATE_TIMES_PER_SEC);
+        }else {
+            speed = 1;
+        }
+        switch (direction) {
+            case 1:
+                velocityY = -speed;
+                break;
+            case 2:
+                velocityY = speed;
+                break;
+            case 3:
+                velocityX = -speed;
+                break;
+            case 4:
+                velocityX = speed;
+        }
+        this.direction = direction;
     }
 
-    public enum FaceTo {
-        UP, DOWN, LEFT, RIGHT
+    public boolean arriveDestinationCondition(){        //判斷到達目的地的方法
+        int x = collider().left(),y = collider().top();
+        switch (direction) {
+            case 1:     //上
+                if (y < destinationY){
+                    return true;
+                }
+                break;
+            case 2:     //下
+                if (y > destinationY){
+                    return true;
+                }
+                break;
+            case 3:     //左
+                if (x < destinationX){
+                    return true;
+                }
+                break;
+            case 4:     //右
+                if (x > destinationX){
+                    return true;
+                }
+        }
+        return false;
     }
-
-
 
     public ActorAnimator getActorAnimator() {
         return actorAnimator;
@@ -289,15 +326,13 @@ public abstract class Actor extends GameObject {
         this.arrivalTime = arrivalTime;
     }
 
-    public void setArriveTimeCounter(Delay arriveTimeCounter) {
-        this.arriveTimeCounter = arriveTimeCounter;
-    }
+//    public void setArriveTimeCounter(Delay arriveTimeCounter) {
+//        this.arriveTimeCounter = arriveTimeCounter;
+//    }
 
     public void setTarget(Actor target) {
         this.target = target;
     }
-
-    private boolean isArriveDestination;        //是否到達目標地
 
     public boolean isArriveDestination() {
         return isArriveDestination;
@@ -307,9 +342,9 @@ public abstract class Actor extends GameObject {
         return arrivalTime;
     }
 
-    public Delay getArriveTimeCounter() {
-        return arriveTimeCounter;
-    }
+//    public Delay getArriveTimeCounter() {
+//        return arriveTimeCounter;
+//    }
 
     public Actor getTarget() {
         return target;
@@ -386,5 +421,26 @@ public abstract class Actor extends GameObject {
     public double getMoveSpeed() {
         return moveSpeed;
     }
+
+    public void setActorAnimator(ActorAnimator actorAnimator) {
+        this.actorAnimator = actorAnimator;
+    }
+
+    public ActorAnimator.State getState() {
+        return state;
+    }
+
+    public void setState(ActorAnimator.State state) {
+        this.state = state;
+    }
+
+    public Global.Direction getDir() {
+        return dir;
+    }
+
+    public void setDir(Global.Direction dir) {
+        this.dir = dir;
+    }
+
 }
 

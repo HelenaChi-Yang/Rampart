@@ -1,9 +1,0 @@
-path1,-52,C:\Users\mandy\Desktop\path\path1.png,1,1
-pathUnder,-26215,C:\Users\mandy\Desktop\path\path2.png,1,1
-pathUp,-3407821,C:\Users\mandy\Desktop\path\path3.png,1,1
-pathRight,-16750849,C:\Users\mandy\Desktop\path\path4.png,1,1
-pathLeft,-16711681,C:\Users\mandy\Desktop\path\path5.png,1,1
-cornerRightBottom,-13421824,C:\Users\mandy\Desktop\path\path3 (1).png,1,1
-cornerLeftBottom,-13421773,C:\Users\mandy\Desktop\path\path3 (2).png,1,1
-cornerRigthTop,-16751002,C:\Users\mandy\Desktop\path\path3 (3).png,1,1
-cornerLeftTop,-16724788,C:\Users\mandy\Desktop\path\path3 (4).png,1,1

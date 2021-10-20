@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public abstract class Scene {
 
-    public abstract void sceneBegin() throws IOException;
+    public abstract void sceneBegin();
 
     public abstract void sceneEnd();
 

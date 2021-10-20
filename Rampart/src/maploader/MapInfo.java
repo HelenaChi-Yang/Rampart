@@ -1,5 +1,9 @@
 package maploader;
 
+import com.company.Global;
+import gameObject.GameObject;
+import gameObject.Rect;
+
 public class MapInfo {
 
     private final String name;
@@ -19,7 +23,7 @@ public class MapInfo {
         this.isWalk = false;
     }
 
-    public String getName() { 
+    public String getName() {
         return name;
     }
 
@@ -39,6 +43,22 @@ public class MapInfo {
         return sizeY;
     }
 
+    public int getAbsCoordinateX() {
+        return (int) (x * sizeX + 0.5 * sizeX);
+    }
+
+    public int getAbsCoordinateY() {
+        return (int) (y * sizeY + 0.5 * sizeY);
+    }
+
+    public boolean isInThisGrid(GameObject gameObject) {
+        Rect object = gameObject.collider();
+        int gridSize = Global.MAP_PIXEL;
+        if (object.centerX() >= x * gridSize && object.centerX() <= (x * gridSize) + sizeX * gridSize && object.centerY() >= y * gridSize && object.centerY() <= (y * gridSize) + sizeY * gridSize) {
+            return true;
+        }
+        return false;
+    }
 
     public boolean isWalk() {
         return isWalk;

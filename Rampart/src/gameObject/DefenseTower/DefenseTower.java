@@ -1,18 +1,28 @@
 package gameObject.DefenseTower;
 
 
+import com.company.CommandSolver;
 import com.company.Delay;
 import com.company.Global;
+import com.company.Path;
+import controllers.AudioResourceController;
 import gameObject.Actor;
 import gameObject.Projectile.Projectile;
 import gameObject.Rect;
 import gameObject.GameObject;
+import menu.Button;
+import menu.Theme;
+import menu.impl.MouseTriggerImpl;
+import scene.PopupTowerScene;
 
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public abstract class DefenseTower extends GameObject {
+import static com.company.Global.*;
+
+public abstract class DefenseTower extends GameObject implements  CommandSolver.MouseCommandListener {
 
 
     private double attackPower;     //攻擊力
@@ -26,7 +36,25 @@ public abstract class DefenseTower extends GameObject {
     private boolean canAttack;      //攻擊間隔計時器到了，這邊true，暫停計時，等到有怪才攻擊，開火後轉false，繼續計時，LOOP
     private boolean canUseSkill;      //同上，技能用
     private Image img;
+    protected PopupTowerScene popupTowerScene;
+    protected Button mouseButton;
 
+    public DefenseTower (int x, int y, int width, int height) {
+        super(x,y,width,height);
+        mouseButton = new Button(x + width/2 , y + height/2, Theme.get(13));
+        setButton();
+        popupTowerScene = new PopupTowerScene(x + width/2, y + height/2,TOWERWIDTH+48,TOWERHEIGHT +48);
+
+    }
+
+    public void setButton() {
+        mouseButton.setClickedActionPerformed((int x, int y) -> {
+            AudioResourceController.getInstance().shot(new Path().sound().gameButton());
+            popupTowerScene.sceneBegin();
+            popupTowerScene.show();
+            popupTowerScene.setCancelable();
+        });
+    }
 
     public void setCanUseSkill(boolean canUseSkill) {
         this.canUseSkill = canUseSkill;
@@ -124,12 +152,22 @@ public abstract class DefenseTower extends GameObject {
         return img;
     }
 
-    public DefenseTower(int x, int y, int width, int high) {
-        super(x, y, width, high);
-    }
+
 
     public DefenseTower(int cX, int cY, int cWidth, int cHigh, int pX, int pY, int pWidth, int pHigh) {
         super(cX, cY, cWidth, cHigh, pX, pY, pWidth, pHigh);
+        mouseButton = new Button(cX , cY, Theme.get(13));
+        setButton();
+        popupTowerScene = new PopupTowerScene(cX,cY,TOWERWIDTH+48,TOWERHEIGHT +48);
+    }
+
+    @Override
+    public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
+        if (!popupTowerScene.isShow()) {
+            MouseTriggerImpl.mouseTrig(mouseButton, e, state);
+        } else {
+            popupTowerScene.mouseListener().mouseTrig(e, state, trigTime);
+        }
     }
 
 
@@ -153,6 +191,7 @@ public abstract class DefenseTower extends GameObject {
         Color transparentMagenta = new Color(0, 81, 255, 34);        //自訂半透明顏色，左邊可選
         g.setColor(transparentMagenta);     //載入顏色
         g.fillOval(painter().left() - (int) (attackRange - painter().width() / 2), painter().top() - (int) (attackRange - painter().height() / 2), (int) (attackRange * 2), (int) (attackRange * 2));
+
     }
 
     //判定怪物進入攻擊範圍，在Scene呼叫 if(DefenseTower.getTarget == null)，防禦塔目前沒目標才掃過怪物array，掃到攻擊範圍內有目標的話，setTarget該目標，break怪物陣列掃描
@@ -162,12 +201,16 @@ public abstract class DefenseTower extends GameObject {
     }
 
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         for (int i = 0; i < projectiles.size(); i++) {
             projectiles.get(i).paintComponent(g);
         }
-        super.paint(g);
         if (Global.IS_DEBUG) {
             paintAttackRange(g);
+        }
+        this.mouseButton.paint(g);
+        if (popupTowerScene.isShow()) {
+            popupTowerScene.paint(g);
         }
     }
 

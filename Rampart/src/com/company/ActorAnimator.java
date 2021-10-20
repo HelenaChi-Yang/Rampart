@@ -2,6 +2,7 @@ package com.company;
 
 
 import controllers.SceneController;
+import gameObject.Rect;
 
 import java.awt.*;
 
@@ -41,7 +42,7 @@ public class ActorAnimator implements CommandSolver.KeyListener{
      * state為跑 or 走
      * dir 為角色行走上下左右
      * inputPosX/Y 為角色起始位置*/
-    public ActorAnimator(int type, State state, Global.Direction dir, int inputPosX, int inputPosY){
+    public ActorAnimator(int type, State state, Global.Direction dir){
 
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().actors().flying());
         delay = new Delay(0);
@@ -52,8 +53,6 @@ public class ActorAnimator implements CommandSolver.KeyListener{
         setState(state); //建構一個跑或走的實體
         setDirection(dir);
 
-        posX = inputPosX;
-        posY = inputPosY;
     }
 
     public final void setState(State state){
@@ -124,20 +123,5 @@ public class ActorAnimator implements CommandSolver.KeyListener{
         this.type = type;
     }
 
-    public int getPosX() {
-        return posX;
-    }
-
-    public void setPosX(int posX) {
-        this.posX += posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-
-    public void setPosY(int posY) {
-        this.posY += posY;
-    }
 
 }
