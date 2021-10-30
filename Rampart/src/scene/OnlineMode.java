@@ -1,6 +1,6 @@
 package scene;
 
-import Internet.Server;
+import Internet.Servers;
 import controllers.AudioResourceController;
 import controllers.SceneController;
 import menu.Button;
@@ -26,13 +26,15 @@ public class OnlineMode extends Scene{
         System.out.println("雙人模式場景開始");
         background = SceneController.getInstance().imageController().tryGetImage(new Path().img().backgrounds().main());
         title = SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().rampart());
-        buttonHost = new Button(WINDOW_WIDTH/2 -(WINDOW_WIDTH/5), WINDOW_HEIGHT/2 +WINDOW_HEIGHT/5, Theme.get(7)); // host
+        buttonHost = new Button(WINDOW_WIDTH/2 -(WINDOW_WIDTH/5), WINDOW_HEIGHT/2 +140, Theme.get(7)); // host
         buttonHost.setClickedActionPerformed((int x, int y) -> {
             AudioResourceController.getInstance().shot(new Path().sound().button());
-            Server.getInstance().start();
-            SceneController.getInstance().change(new InputNameScene(true,true,serverIP ));
+            Servers.getInstance().start();
+            //serverIP = Server.getInstance().getIP();
+            SceneController.getInstance().change(new ChooseRoleScene(true,true,serverIP));
+            //SceneController.getInstance().change(new InputNameScene(true,true,serverIP ));
         });
-        buttonGuest = new Button(WINDOW_WIDTH/2 +(WINDOW_WIDTH/5), WINDOW_HEIGHT/2 +WINDOW_HEIGHT/5, Theme.get(8)); //guest
+        buttonGuest = new Button(WINDOW_WIDTH/2 +(WINDOW_WIDTH/5), WINDOW_HEIGHT/2 +140, Theme.get(8)); //guest
         buttonGuest.setClickedActionPerformed((int x, int y) -> {
             AudioResourceController.getInstance().shot(new Path().sound().button());
             SceneController.getInstance().change(new InputIPScene());
@@ -52,7 +54,7 @@ public class OnlineMode extends Scene{
     @Override
     public void paint(Graphics g) {
         g.drawImage(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, null);
-        g.drawImage(title, WINDOW_WIDTH/2-(WINDOW_WIDTH*3/5)/2, WINDOW_HEIGHT-WINDOW_HEIGHT*93/100, WINDOW_WIDTH*2/3, WINDOW_HEIGHT/5, null);
+        g.drawImage(title, 250, WINDOW_HEIGHT-WINDOW_HEIGHT*93/100, WINDOW_WIDTH*2/3, WINDOW_HEIGHT/5, null);
 //        p1.paint(Direction.RIGHT, WINDOW_WIDTH-WINDOW_WIDTH*8/9, WINDOW_HEIGHT-WINDOW_HEIGHT*30/100, WINDOW_WIDTH-WINDOW_WIDTH*8/9+100, WINDOW_HEIGHT-WINDOW_HEIGHT*30/100+100, g);
 //        p2.paint(Direction.RIGHT, WINDOW_WIDTH-WINDOW_WIDTH*7/9, WINDOW_HEIGHT-WINDOW_HEIGHT*30/100, WINDOW_WIDTH-WINDOW_WIDTH*7/9+100, WINDOW_HEIGHT-WINDOW_HEIGHT*30/100+100, g);
 //        p3.paint(Direction.LEFT, WINDOW_WIDTH-WINDOW_WIDTH*2/9, WINDOW_HEIGHT-WINDOW_HEIGHT*30/100, WINDOW_WIDTH-WINDOW_WIDTH*2/9+100, WINDOW_HEIGHT-WINDOW_HEIGHT*30/100+80, g);

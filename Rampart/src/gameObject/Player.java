@@ -1,39 +1,64 @@
 package gameObject;
 
 
-
 import com.company.Global;
 
-import java.awt.*;
+public class Player {
+    public void setName(String name) {
+        this.name = name;
+    }
 
-public class Player implements bigShot{
     private String name;
     private int money;
+    private int playerHp;
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     private int level;
     private int monsterHitCount;
-    private Image avator;
+
+    public int getMonsterHitCount() {
+        return monsterHitCount;
+    }
+
+
+    public Global.gameRole getHero() {
+        return hero;
+    }
+
     private Global.gameRole hero;
 
-    public Player(String name, Global.gameRole hero , int level) {
-        this.name = name;
-        money = 0;
-        this.level = level;
+    public void setHero(Global.gameRole hero) {
         this.hero = hero;
-        switch (hero) {
-            case ROLE1:
-                break;
-            case ROLE2:
-                break;
-            case ROLE3:
-                break;
-            case ROLE4:
-                break;
-        }
+    }
+
+
+    public Player() {
+        this.level = 1;
+        this.money = 500;
+        this.playerHp = 10;
+        this.monsterHitCount = 0;
     }
 
     // money
     // 角色技能
     //頭像？
+
+    public void reset(){
+        this.money = 500;
+        this.playerHp = 10;
+    }
+
+    public int getPlayerHp() {
+        return playerHp;
+    }
+
+    public void setPlayerHp(int setHp) {
+        this.playerHp = setHp;
+    }
+
 
     public int getMoney() {
         return money;
@@ -43,15 +68,15 @@ public class Player implements bigShot{
         return level;
     }
 
-    public void gainMoneyByTime(){
+    public void gainMoneyByTime() {
         money += 10;
     }
 
-    public void gainMoneyByMonsterHit(){
+    public void gainMoneyByMonsterHit() {
         money += 50;
     }
 
-    public void monsterHit(){
+    public void monsterHit() {
         monsterHitCount++;
     }
 
@@ -59,9 +84,9 @@ public class Player implements bigShot{
         return name;
     }
 
-
-    @Override
-    public void bigshot() {
-
+    public void addMoney(int addMoney) {
+        this.money += addMoney;
     }
+
+
 }

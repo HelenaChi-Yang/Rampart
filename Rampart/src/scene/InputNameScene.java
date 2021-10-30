@@ -1,7 +1,7 @@
 package scene;
 
 import Internet.Client;
-import Internet.Server;
+import Internet.Servers;
 import controllers.AudioResourceController;
 import controllers.SceneController;
 
@@ -21,6 +21,9 @@ import com.company.Global.*;
 import com.company.Global;
 import com.company.Path;
 import java.awt.Image;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.company.Global.WINDOW_HEIGHT;
@@ -31,7 +34,7 @@ public class InputNameScene extends Scene {
     private Image img;
     private ArrayList<Label> labels;
     private EditText inputName;
-//    private EditText inputIP;
+    private Label titleInputName;
     private Button buttonConfirm;
     private int currentFocus;
     private Font fontString;
@@ -55,19 +58,21 @@ public class InputNameScene extends Scene {
         //inputIP = this.addEditText(Global.SCREEN_X / 2, Global.SCREEN_Y / 3 + 150, "Please enter IP");
         buttonConfirm = new Button(WINDOW_WIDTH/2 -(WINDOW_WIDTH/5) , WINDOW_HEIGHT/2 +WINDOW_HEIGHT/3, Theme.get(9)); //confirm
         buttonConfirm.setClickedActionPerformed((int x, int y) -> {
-            Player player = new Player(inputName.getEditText(), gameRole.ROLE1, 1);
+            //Player player = new Player(inputName.getEditText());
+            Player player = new Player();
             AudioResourceController.getInstance().shot(new Path().sound().button());
 
             if(isOnlineMOde) {
                 if(serverIP == "") {
-                    serverIP = Server.getInstance().getIP();
+                    serverIP = Servers.getInstance().getIP();
                     System.out.println("i am server");
                 }
                 Client.getInstance().start(5200,serverIP);
-                SceneController.getInstance().change(new WaitingScene(isHost));   // 雙人
+                SceneController.getInstance().change(new ChooseRoleScene(isOnlineMOde, isHost,serverIP));    // 雙人
 
             } else {
-                SceneController.getInstance().change(new MenuScene());   // 單人
+                saveFile(player);
+                SceneController.getInstance().change(new ChooseRoleScene(false, false,""));   // 單人
             }
         });
 
@@ -85,18 +90,30 @@ public class InputNameScene extends Scene {
         //inputIP = null;
         buttonConfirm = null;
         labels = null;
+        img = null;
+        titleInputName = null;
     }
 
     @Override
     public void paint(Graphics g) {
         g.drawImage(img, 0, 0, Global.SCREEN_X, Global.SCREEN_Y, 0, 0, img.getWidth(null), img.getHeight(null), null);
-        g.setColor(Color.white);
+        g.setColor(Color.RED);
         g.setFont(fontString);
-        g.drawString("Name", inputName.getX() - 100, inputName.getY() + 40);
+        g.drawString("Name: ", inputName.getX() - 100, inputName.getY() + 40);
         //g.drawString("IP", inputIP.getX() - 50, inputIP.getY() + 40);
         this.inputName.paint(g);
         //this.inputIP.paint(g);
         this.buttonConfirm.paint(g);
+
+        titleInputName = new Label(WINDOW_WIDTH/2,100, new Style.StyleRect(WINDOW_WIDTH/2,60, true, new BackgroundType.BackgroundColor(new Color(17, 61, 143, 0)))
+                .setTextColor(new Color(178, 39, 15))
+                .setHaveBorder(true)
+                .setBorderColor(new Color(215, 186, 50,0))
+                .setBorderThickness(10)
+                .setTextFont(new Font("", Font.TYPE1_FONT, 70))
+                .setText("Please enter your name"));
+        this.titleInputName.paint(g);
+
     }
 
     @Override
@@ -168,6 +185,21 @@ public class InputNameScene extends Scene {
                 //inputIP.keyTyped(c);
             }
         };
+    }
+
+    public void saveFile( Player player){
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("save.txt"));
+            //一個一個寫的方式
+
+            bw.write(player.getLevel()+"");
+            bw.newLine();
+            bw.flush();
+            bw.close();
+
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

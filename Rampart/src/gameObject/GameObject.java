@@ -1,17 +1,28 @@
 package gameObject;
 
+import com.company.Delay;
 import com.company.GameKernel;
 import com.company.Global;
-import gameObject.Rect;
 import menu.Button;
 
 import java.awt.*;
+import java.util.Map;
 
 public abstract class GameObject implements GameKernel.GameInterface {
 
     private final Rect collider;
     private final Rect painter;
     protected  Button mouseButton;
+    protected AbnormalState abnormalState;
+    protected boolean isStun,isSlow, isBreakDefense,isAccelerate,isDecreaseAttackSpeed, isDoubleDefense;
+    protected Delay stunDelay,slowDelay, breakDefenseDelay,accelerateDelay,decreaseAttackSpeedDelay,doubleDefenseDelay;
+
+    public enum AbnormalState{      //異常狀態:暈炫、緩速、破防，雙人模式:怪物加速、減少塔攻速
+        Stun,Slow, BreakDefense, Accelerate,DecreaseAttackSpeed,DoubleDefense,
+    }
+
+    public void addAbnormalState(int duration, AbnormalState abnormalState){        //附加異常狀態，子類override
+    }
 
     public GameObject(int x, int y, int width, int height) {
         this(x, y, width, height, x, y, width, height);

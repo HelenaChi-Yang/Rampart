@@ -29,9 +29,11 @@ public class Main {
         GameCenter gi = new GameCenter();
         GameKernel kernel = new GameKernel.Builder(gi, Global.LIMIT_DELTA_TIME, Global.NANOSECOUND_PER_UPDATE)
                 .initListener(commands)
-                .enableMouseTrack(gi)
                 .enableKeyboardTrack(gi)
+                .enableMouseTrack(gi)
+                .mouseForceRelease()
                 .keyCleanMode()
+                .trackChar()
                 .gen();
 
 

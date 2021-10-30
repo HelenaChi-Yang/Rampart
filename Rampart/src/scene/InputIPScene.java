@@ -24,7 +24,7 @@ import static com.company.Global.WINDOW_WIDTH;
 public class InputIPScene extends Scene{
     private Image img;
     private ArrayList<Label> labels;
-    //private EditText inputName;
+    private Label titleInputIP;
     private EditText inputIP;
     private Button buttonConfirm;
     private int currentFocus;
@@ -36,14 +36,15 @@ public class InputIPScene extends Scene{
         System.out.println("輸入IP場景開始");
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().backgrounds().main());
         inputIP = this.addEditText(Global.SCREEN_X / 2, Global.SCREEN_Y / 3 + 50, "Please enter server IP");
-        serverIP =inputIP.getEditText();
-        //inputName.setEditLimit(12);
+        inputIP.setEditLimit(12);
         //inputIP = this.addEditText(Global.SCREEN_X / 2, Global.SCREEN_Y / 3 + 150, "Please enter IP");
-        buttonConfirm = new Button(WINDOW_WIDTH/2 -(WINDOW_WIDTH/5) , WINDOW_HEIGHT/2 +WINDOW_HEIGHT/3, Theme.get(9)); //confirm
+        buttonConfirm = new Button(WINDOW_WIDTH/2 +(WINDOW_WIDTH/5 ), WINDOW_HEIGHT/2 +WINDOW_HEIGHT/3 -20, Theme.get(9)); //confirm
         buttonConfirm.setClickedActionPerformed((int x, int y) -> {
             AudioResourceController.getInstance().shot(new Path().sound().button());
-            Client.getInstance().start(5200,serverIP);
-            SceneController.getInstance().change(new InputNameScene(true, false,serverIP));
+            serverIP =inputIP.getEditText();
+            System.out.println("serverIP: " + serverIP);
+//            Client.getInstance().start(5200,serverIP);
+            SceneController.getInstance().change(new ChooseRoleScene(true,false,serverIP));
         });
 
         labels = new ArrayList<>();
@@ -61,18 +62,28 @@ public class InputIPScene extends Scene{
         //inputIP = null;
         buttonConfirm = null;
         labels = null;
+        img = null;
+        titleInputIP = null;
     }
 
     @Override
     public void paint(Graphics g) {
         g.drawImage(img, 0, 0, Global.SCREEN_X, Global.SCREEN_Y, 0, 0, img.getWidth(null), img.getHeight(null), null);
-        g.setColor(Color.white);
+        g.setColor(Color.red);
         g.setFont(fontString);
-        g.drawString("IP", inputIP.getX() - 100, inputIP.getY() + 40);
+        g.drawString("Please enter server IP", inputIP.getX() , inputIP.getY()-40 );
         //g.drawString("IP", inputIP.getX() - 50, inputIP.getY() + 40);
         this.inputIP.paint(g);
         //this.inputIP.paint(g);
         this.buttonConfirm.paint(g);
+//        titleInputIP = new Label(WINDOW_WIDTH/2,100, new Style.StyleRect(WINDOW_WIDTH/2,60, true, new BackgroundType.BackgroundColor(new Color(17, 61, 143, 0)))
+//                .setTextColor(new Color(178, 39, 15))
+//                .setHaveBorder(true)
+//                .setBorderColor(new Color(215, 186, 50,0))
+//                .setBorderThickness(10)
+//                .setTextFont(new Font("", Font.TYPE1_FONT, 70))
+//                .setText("Please enter server IP"));
+        //this.titleInputIP.paint(g);
     }
 
     @Override

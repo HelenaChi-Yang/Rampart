@@ -1,20 +1,17 @@
 package gameObject.DefenseTower;
 
 
-import com.company.CommandSolver;
-import com.company.Delay;
-import com.company.Global;
-import com.company.Path;
+import com.company.*;
 import controllers.AudioResourceController;
 import gameObject.Actor;
+import gameObject.AreaEffectJudge;
+import gameObject.GameObject;
 import gameObject.Projectile.Projectile;
 import gameObject.Rect;
-import gameObject.GameObject;
 import menu.Button;
 import menu.Theme;
 import menu.impl.MouseTriggerImpl;
 import scene.PopupTowerScene;
-
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -22,11 +19,10 @@ import java.util.ArrayList;
 
 import static com.company.Global.*;
 
-public abstract class DefenseTower extends GameObject implements  CommandSolver.MouseCommandListener {
-
+public abstract class DefenseTower extends GameObject implements CommandSolver.MouseCommandListener, AreaEffectJudge {
 
     private double attackPower;     //攻擊力
-    private double towerLevel;      //塔等級
+    protected int towerLevel;      //塔等級
     private double attackRange;     //攻擊範圍半徑
     private double attackSpeed;     //每秒攻擊次數
     private double skillCoolDown;       //技能冷卻時間
@@ -35,25 +31,54 @@ public abstract class DefenseTower extends GameObject implements  CommandSolver.
     private ArrayList<Projectile> projectiles;      //發射的攻擊
     private boolean canAttack;      //攻擊間隔計時器到了，這邊true，暫停計時，等到有怪才攻擊，開火後轉false，繼續計時，LOOP
     private boolean canUseSkill;      //同上，技能用
-    private Image img;
+    protected TowerAnimator towerAnimator;
+    protected Image img;
+    private int slowCount = 0;
+    public int sellNum;
+
     protected PopupTowerScene popupTowerScene;
     protected Button mouseButton;
+    protected TowerType towerType;      //在Scene取得塔類型用的
+    protected TowerState towerState;        //在Scene取得塔類型用的
 
-    public DefenseTower (int x, int y, int width, int height) {
-        super(x,y,width,height);
-        mouseButton = new Button(x + width/2 , y + height/2, Theme.get(13));
+    public enum TowerType {      //三大種類的塔:弓箭、魔法、大砲
+        ArcherTower, MagicTower, CannonTower,
+    }
+
+    public enum TowerState {     //塔的型態:基礎、進階、特化1、特化2
+        Basic, Advance, Specialization1, Specialization2,
+    }
+
+    public DefenseTower(int x, int y, int width, int height, double towerLevel, TowerType towerType, TowerState towerState) {
+        super(x, y, width, height);
+        mouseButton = new Button(x + width / 2, y + height / 2, Theme.get(13));
         setButton();
-        popupTowerScene = new PopupTowerScene(x + width/2, y + height/2,TOWERWIDTH+48,TOWERHEIGHT +48);
-
+        popupTowerScene = new PopupTowerScene(x + width / 2, y + height / 2, TOWERWIDTH + 80, TOWERHEIGHT + 64, this);
+        this.towerType = towerType;
+        this.towerState = towerState;
     }
 
     public void setButton() {
         mouseButton.setClickedActionPerformed((int x, int y) -> {
             AudioResourceController.getInstance().shot(new Path().sound().gameButton());
+            System.out.println(towerType + "," + towerState);
+            popup();
             popupTowerScene.sceneBegin();
             popupTowerScene.show();
             popupTowerScene.setCancelable();
         });
+    }
+
+    public int getTowerLevel() {
+        return towerLevel;
+    }
+
+    public TowerType getTowerType() {
+        return towerType;
+    }
+
+    public TowerState getTowerState() {
+        return towerState;
     }
 
     public void setCanUseSkill(boolean canUseSkill) {
@@ -112,9 +137,6 @@ public abstract class DefenseTower extends GameObject implements  CommandSolver.
         this.attackPower = attackPower;
     }
 
-    public void setTowerLevel(double towerLevel) {
-        this.towerLevel = towerLevel;
-    }
 
     public void setAttackSpeed(double attackSpeed) {
         this.attackSpeed = attackSpeed;
@@ -144,21 +166,16 @@ public abstract class DefenseTower extends GameObject implements  CommandSolver.
         return attackSpeed;
     }
 
-    public double getTowerLevel() {
-        return towerLevel;
-    }
-
     public Image getImg() {
         return img;
     }
 
 
-
     public DefenseTower(int cX, int cY, int cWidth, int cHigh, int pX, int pY, int pWidth, int pHigh) {
         super(cX, cY, cWidth, cHigh, pX, pY, pWidth, pHigh);
-        mouseButton = new Button(cX , cY, Theme.get(13));
+        mouseButton = new Button(cX, cY, Theme.get(13));
         setButton();
-        popupTowerScene = new PopupTowerScene(cX,cY,TOWERWIDTH+48,TOWERHEIGHT +48);
+        popupTowerScene = new PopupTowerScene(cX, cY, TOWERWIDTH + 80, TOWERHEIGHT + 64, this);
     }
 
     @Override
@@ -197,7 +214,7 @@ public abstract class DefenseTower extends GameObject implements  CommandSolver.
     //判定怪物進入攻擊範圍，在Scene呼叫 if(DefenseTower.getTarget == null)，防禦塔目前沒目標才掃過怪物array，掃到攻擊範圍內有目標的話，setTarget該目標，break怪物陣列掃描
     public boolean isIntoAttackRange(Actor monster) {
         Rect rect = monster.collider();
-        return getAttackRange() > Math.pow(Math.pow(rect.left() - painter().left(), 2) + Math.pow(rect.top() - painter().top(), 2), 0.5);
+        return getAttackRange() > Math.pow(Math.pow(rect.centerX() - painter().centerX(), 2) + Math.pow(rect.centerY() - painter().centerY(), 2), 0.5);
     }
 
     public void paintComponent(Graphics g) {
@@ -211,13 +228,67 @@ public abstract class DefenseTower extends GameObject implements  CommandSolver.
         this.mouseButton.paint(g);
         if (popupTowerScene.isShow()) {
             popupTowerScene.paint(g);
+            paintAttackRange(g);        //顯示攻擊範圍
+        }
+    }
+
+    public void popup() {
+        popupTowerScene = new PopupTowerScene(painter().left() + painter().width() / 2, painter().top() + painter().height() / 2,
+                TOWERWIDTH + 80, TOWERHEIGHT + 64, this);
+
+    }
+
+    @Override
+    public void addAbnormalState(int duration, AbnormalState abnormalState) {        //附加異常狀態，子類override
+        switch (abnormalState) {
+            case Stun:
+                isStun = true;
+                stunDelay = new Delay(duration * UPDATE_TIMES_PER_SEC);
+                stunDelay.play();
+                break;
+
+            case Slow:
+                isSlow = true;
+                slowDelay = new Delay(duration * UPDATE_TIMES_PER_SEC);
+                slowDelay.play();
         }
     }
 
     @Override
     public void update() {      //所有塔共用的update
+        if (isCanUseSkill()) {      //和攻擊間隔做一樣的事
+            if (getTarget() != null) {
+                if (IS_DEBUG) {
+                    System.out.println("useSkill");
+                }
+                useSkill(getTarget());
+                canUseSkill = false;
+                getSkillCoolDownDelayCount().play();
+            }
+        } else {
+            if (getSkillCoolDown() != 0 && getSkillCoolDownDelayCount().count()) {     //無技能的塔直接跳過，有技能的CD到自動使用
+                canUseSkill = true;
+                getSkillCoolDownDelayCount().stop();        //重製計時器count
+            }
+        }
 
-        if (getTarget() != null && !isIntoAttackRange(getTarget())) {       //判斷當前目標是否離開範圍，離開的話清除當前目標
+        if (isStun) {        //防禦塔失效技能
+            if (stunDelay.count()) {
+                isStun = false;
+            }
+            return;
+        }
+
+        if (isSlow) {       //防禦塔減攻速技能
+            if (slowDelay.count()) {
+                isSlow = false;
+            }
+            if (++slowCount % 3 == 0) {      //減少三分之一攻速
+                slowCount = 0;
+                return;
+            }
+        }
+        if (getTarget() != null && (!isIntoAttackRange(getTarget()) || getTarget().isDead() || getTarget().isArriveFinalGrid)) {       //判斷當前目標是否離開範圍，離開的話清除當前目標
             setTarget(null);        //清除當前目標
         }
 
@@ -234,30 +305,6 @@ public abstract class DefenseTower extends GameObject implements  CommandSolver.
             }
         }
 
-        if (isCanUseSkill()) {      //和攻擊間隔做一樣的事
-            if (getTarget() != null) {
-                useSkill(getTarget());
-                canUseSkill = false;
-                getSkillCoolDownDelayCount().play();
-            }
-        } else {
-            if (getSkillCoolDown() != 0 && getSkillCoolDownDelayCount().count()) {     //無技能的塔直接跳過，有技能的CD到自動使用
-                canUseSkill = true;
-            }
-        }
-
-
-        for (int i = 0; i < projectiles.size(); ++i) {     //掃過投射物array
-            Projectile temp = projectiles.get(i);
-            temp.update();     //移動功能在投射物的update
-            if (temp.getArriveTimeCounter().count()) {       //投射物飛行時間到(也就是飛到目標身上了，這樣寫就必中，不用碰撞判定)
-                getProjectiles().remove(temp);     //投射物消失
-                temp.getTarget().minusHp(attackPower);        //怪物扣血
-            }
-
-//            if (p.isOverScreen()) {      //超出螢幕移除，必中用不到
-//                getProjectiles().remove(p);
-//            }
-        }
     }
+
 }

@@ -68,6 +68,10 @@ public class Life {
 
     }
 
+    public double getLifeMax() {
+        return lifeMax;
+    }
+
     public void draw(Graphics g) {
 
         Graphics2D g2 = (Graphics2D) g;

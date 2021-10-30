@@ -1,6 +1,10 @@
 package com.company;
 
 public class Delay {
+    public int getCount() {
+        return count;
+    }
+
     private int count;
     private int countLimit;
     private boolean isPause;

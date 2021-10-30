@@ -3,11 +3,17 @@ package scene;
 import com.company.CommandSolver;
 import com.company.Global;
 import com.company.Path;
+import controllers.AudioResourceController;
 import controllers.SceneController;
+import gameObject.DefenseTower.DefenseTower;
 import maploader.MapInfo;
 import maploader.MapLoader;
+import menu.Button;
+import menu.Theme;
+import menu.impl.MouseTriggerImpl;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -31,11 +37,20 @@ public class MapTest extends Scene {
     private Image corner4;
     private Image building;
 
+//    private PopupBuildScene popupBuildScene;
+//    private Button mouseButton;
 
     private ArrayList<MapInfo> mapInfo;  //存入一個boolean
+    private ArrayList<Button> buildingButtons;
+    private ArrayList<PopupBuildScene> bulidingPops;
+    private static ArrayList<int[]> buttonWork;
 
-    public MapTest() throws IOException {
-        mapInfo = new MapLoader("/maploader/map3/genMap.bmp", "/maploader/map3/genMap.txt").combineInfo();
+
+    public MapTest(String MapPath, String txtPath) throws IOException {
+        mapInfo = new MapLoader(MapPath, txtPath).combineInfo();
+        buildingButtons = new ArrayList<>();
+        bulidingPops = new ArrayList<>();
+        buttonWork = new ArrayList<>();
 
         for (MapInfo tmp : mapInfo) {
             switch (tmp.getName()) {
@@ -79,12 +94,45 @@ public class MapTest extends Scene {
                     corner4 = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().corner4());
                     break;
                 case "building":
+                    System.out.println((tmp.getX()*MAP_PIXEL + MAP_PIXEL) + "," + (tmp.getY()*MAP_PIXEL + MAP_PIXEL));
+                    buttonWork.add(new int[]{tmp.getX() * MAP_PIXEL+ MAP_PIXEL, tmp.getY() * MAP_PIXEL+ MAP_PIXEL, 1});
+                    //building = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().building());
+                    buildingButtons.add(new Button(tmp.getX()*MAP_PIXEL + MAP_PIXEL, tmp.getY()*MAP_PIXEL + MAP_PIXEL, Theme.get(38)));
+                    bulidingPops.add(new PopupBuildScene(tmp.getX()*MAP_PIXEL + MAP_PIXEL, tmp.getY()*MAP_PIXEL + MAP_PIXEL, 112, 112));
+                    break;
                 default:
-                    building = SceneController.getInstance().imageController().tryGetImage(new Path().img().road().building());
                     break;
             }
         }
+
+        for (int i = 0; i < buildingButtons.size(); i++) {
+            PopupBuildScene tmp = bulidingPops.get(i);
+            buildingButtons.get(i).setClickedActionPerformed((int x, int y) -> {
+                System.out.println(x + "," + y);
+                AudioResourceController.getInstance().shot(new Path().sound().gameButton());
+                System.out.println("成功啦");
+                tmp.sceneBegin();
+                tmp.show();
+                tmp.setCancelable();
+            });
+        }
+
+
+
+
+
+//        for (Button button: buildingButtons) {
+//            button.setClickedActionPerformed((int x, int y) -> {
+//                AudioResourceController.getInstance().shot(new Path().sound().gameButton());
+//                System.out.println("成功啦");
+//                popupTowerScene.sceneBegin();
+//                popupTowerScene.show();
+//                popupTowerScene.setCancelable();
+//            });
+//        }
+
     }
+
 
     @Override
     public void sceneBegin() {
@@ -145,6 +193,41 @@ public class MapTest extends Scene {
                     break;
             }
         }
+
+        for (int i = 0; i < bulidingPops.size(); i++) {
+            if (!bulidingPops.get(i).isShow()) {
+                if (buttonWork.get(i)[2] == 1) {
+                    buildingButtons.get(i).paint(g);
+                }
+            }
+        }
+
+
+
+        for (PopupBuildScene pop: bulidingPops) {
+            if (pop.isShow()) {
+                pop.paint(g);
+            }
+        }
+
+    }
+
+    public static void closeButton( int x, int y) {
+        for (int i = 0; i < buttonWork.size(); i++) {
+            if (buttonWork.get(i)[0] == x + 56 && buttonWork.get(i)[1] == y + 56) {
+                buttonWork.get(i)[2] = 0;
+                break;
+            }
+        }
+    }
+
+    public static void turnOnButton( int x, int y) {
+        for (int i = 0; i < buttonWork.size(); i++) {
+            if (buttonWork.get(i)[0] == x + 56 && buttonWork.get(i)[1] == y + 64) {
+                buttonWork.get(i)[2] = 1;
+                break;
+            }
+        }
     }
 
     @Override
@@ -154,7 +237,26 @@ public class MapTest extends Scene {
 
     @Override
     public CommandSolver.MouseCommandListener mouseListener() {
-        return null;
+        return (MouseEvent e, CommandSolver.MouseState state, long trigTime) -> {
+
+//            for (Button button: buildingButtons) {
+//                MouseTriggerImpl.mouseTrig(button, e, state);
+//            }
+            for (int i = 0; i < bulidingPops.size(); i++) {
+                if (!bulidingPops.get(i).isShow()) {
+                    if (buttonWork.get(i)[2] == 1) {
+                        MouseTriggerImpl.mouseTrig(buildingButtons.get(i), e, state);
+                    }
+                } else {
+                    bulidingPops.get(i).mouseListener().mouseTrig(e, state, trigTime);
+                }
+            }
+
+
+
+
+
+        };
     }
 
     @Override
@@ -163,9 +265,9 @@ public class MapTest extends Scene {
     }
 
     /**找出發點(數值要調整)*/
-    public MapInfo firstGrid(){
+    public MapInfo specifyGrid(int x, int y){
         for (MapInfo tmp : mapInfo) {
-            if(tmp.getX() == 6 && tmp.getY()== 0){
+            if(tmp.getX() == x && tmp.getY()== y){
                 return tmp;
             }
         }
